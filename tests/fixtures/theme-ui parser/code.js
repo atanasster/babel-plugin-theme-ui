@@ -4,9 +4,9 @@ export const theme = {
     green:{
       30: '#00aa00',
     },
-    secondary: 'green.30'
+    secondary: 'green.30',
   },
   input: {
-    bg: 'colors.primary'
-  }
-}
+    bg: 'colors.primary',
+  },
+};

@@ -1,10 +1,3 @@
-import { AnyMxRecord } from "dns";
-
-interface Leaves {
-  value?: string;
-  path?: any;
-};
-
 interface Tree {
   nodes: Record<string, Tree>;
 };
@@ -13,12 +6,14 @@ type Value = {
   value: string;
   path: any
 }
-type Node = { __parent: Node | undefined } | Record<string, Tree> | Record<string, Value>;
+type Node = { __parent: Node | undefined; value: string | any[] } | Record<string, Tree> | Record<string, Value>;
 
 const findPath = (tree: Node, value: Value) : Value | undefined => {
   const seg = typeof value.value === 'string' && value.value.split('.');
-  if (seg && seg.length > 1) {
-    return seg.reduce((t, s ) => t ? t[s]: undefined, tree );
+  if (seg && seg.length >= 1) {
+    return seg.reduce((t, s ) => {
+      return t ? Array.isArray(t.value) ? t.value[s] : t[s]: undefined;
+    }, tree );
   }
   return undefined;
 }  
@@ -30,7 +25,15 @@ const transformTree = (fullTree: Node, current: Node) => {
     } else if ('path' in item) {
       const value = findPath(fullTree, item) ||  findPath(current, item);
       if (value) {
-        item.path.node.value.value = value.value;
+        switch (typeof value) {
+          case 'object':
+            item.path.node.value = value.path.node.value;
+            break;
+          case 'string':
+          case 'number':
+            item.path.node.value.value = value;
+            break;
+        }
       }
     }
   })
@@ -56,9 +59,16 @@ export default ({
                   path, 
                 };
                 break;
+              case 'ArrayExpression':
+                current[node.key.name] = {
+                  value: node.value.elements.map(el => el.value),
+                  path, 
+                };
+              break;
               case 'ObjectExpression':
                 current[node.key.name] = {
                   __parent: current,
+                  path,
                 }
                 current = current[node.key.name ?? node.key.value];
                 break;
