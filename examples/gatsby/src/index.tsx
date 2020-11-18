@@ -1,0 +1,9 @@
+import React, { FC, ReactNode } from 'react'
+import { ThemeProvider, Styled } from 'theme-ui'
+import { theme } from './theme'
+
+export const wrapRootElement: FC<{ element: ReactNode}> = ({ element }) => (
+  <ThemeProvider theme={theme}>
+    <Styled.root>{element}</Styled.root>
+  </ThemeProvider>
+)

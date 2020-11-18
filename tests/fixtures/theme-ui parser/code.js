@@ -7,6 +7,6 @@ export const theme = {
     secondary: 'green.30',
   },
   input: {
-    bg: 'colors.primary',
+    bg: 'primary',
   },
 };

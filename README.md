@@ -3,6 +3,83 @@
 
 `babel-plugin-theme-ui` babel plugin transformations for theme-ui themes.
 
+# Install
+
+```sh
+yarn add babel-plugin-theme-ui --dev
+```
+
+# Configuration
+
+You can configure the plugin in your webpack configuration as a babel-loader plugin
+
+## Options
+### useCustomProperties: boolean (default true)
+
+When this option is set to false, the plugin will not transform color properties to use css variables ie `var(--theme-ui-colors-primary)`
+### colorNames: string[] (default ['color', 'bg', 'backgroundColor'],
+
+a list of the color property names to be transformed to css variables
+
+### rootNames: string[] (default ['root', 'colors'])
+
+a list of the theme section not the be transformed into using css variables.
+## Javascript theme
+
+```
+const babelThemeUI = require('babel-plugin-theme-ui);
+
+module: {
+  rules: [
+    {
+      test: /theme.ts$/,
+      exclude: /node_modules/,
+      loader: 'babel-loader',
+      options: {
+        plugins: [
+          [
+            babelThemeUI,
+            {
+              useCustomProperties: false, 
+              colorNames: ['color', 'bg', 'backgroundColor', '--bg-hover', '--color-hover', '--bg-random', '--color'],
+              rootNames = ['root', 'body'],
+            }
+          ]
+        ]
+      }
+    },
+  ],
+},
+```
+
+## Typescript theme
+
+```
+const babelThemeUI = require('babel-plugin-theme-ui);
+
+module: {
+  rules: [
+    {
+      test: /theme.ts$/,
+      exclude: /node_modules/,
+      loader: 'babel-loader',
+      options: {
+        presets: [['typescript']],
+        plugins: [
+          [
+            babelThemeUI,
+            {
+              useCustomProperties: false, 
+              colorNames: ['color', 'bg', 'backgroundColor', '--bg-hover', '--color-hover', '--bg-random', '--color'],
+              rootNames = ['root', 'body'],
+            }
+          ]
+        ]
+      }
+    },
+  ],
+},
+```
 # Transforms
 
 ## Keys in current scope
@@ -32,14 +109,14 @@ export const theme = {
 
 ## Keys from global scope
 
-in the following example the lookup is in a global scope of the theme colors.primary
+in the following example the lookup is in a global scope of the theme colors
 ```
 export const theme = {
   colors: {
     primary: '#ffffff',
   },
   input: {
-    bg: 'colors.primary'
+    bg: 'primary'
   },
 };
 ```
@@ -50,7 +127,7 @@ export const theme = {
     primary: '#ffffff',
   },
   input: {
-    bg: '#ffffff'
+    bg: 'var(--theme-ui-colors-primary)',
   },
 };
 ```
@@ -61,6 +138,9 @@ to avoid repetitive styles for multiple theme keys:
 
 ```
 export const theme = {
+  colors: {
+    primary: 'tomato',
+  },
   input: {
     bg: 'primary',
     border: 'solid 1px black'    
@@ -73,14 +153,17 @@ export const theme = {
 will be transformed to 
 ```
 export const theme = {
+  colors: {
+    primary: "tomato",
+  },
   input: {
-    bg: 'primary',
-    border: 'solid 1px black'    
+    bg: "var(--theme-ui-colors-primary)",
+    border: "solid 1px black",
   },
   styles: {
     select: {
-      bg: 'primary',
-      border: 'solid 1px black'    
+      bg: "var(--theme-ui-colors-primary)",
+      border: "solid 1px black",
     },
   },
 };
