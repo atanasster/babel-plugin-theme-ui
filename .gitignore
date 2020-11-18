@@ -1,2 +1,5 @@
 .history
 node_modules
+.cache
+dist
+public
