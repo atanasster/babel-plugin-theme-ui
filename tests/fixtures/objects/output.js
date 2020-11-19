@@ -3,12 +3,14 @@ export const theme = {
     primary: "tomato",
   },
   input: {
-    bg: "var(--theme-ui-colors-primary)",
+    bg: "primary",
+    "--bg-random": "var(--theme-ui-colors-primary)",
     border: "solid 1px black",
   },
   styles: {
     select: {
-      bg: "var(--theme-ui-colors-primary)",
+      bg: "primary",
+      "--bg-random": "var(--theme-ui-colors-primary)",
       border: "solid 1px black",
     },
   },

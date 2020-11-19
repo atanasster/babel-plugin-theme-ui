@@ -17,13 +17,35 @@ You can configure the plugin in your webpack configuration as a babel-loader plu
 ### useCustomProperties: boolean (default true)
 
 When this option is set to false, the plugin will not transform color properties to use css variables ie `var(--theme-ui-colors-primary)`
-### colorNames: string[] (default ['color', 'bg', 'backgroundColor'],
+### colorNames: string[] (default []),
 
-a list of the color property names to be transformed to css variables
+a list of the color property names to be transformed to css variables. We are using internally [micromatch](https://github.com/micromatch/micromatch) - a glob matching for javascript/node.js and you can use matching patterns for the color properties.
+
 
 ### rootNames: string[] (default ['root', 'colors'])
 
 a list of the theme section not the be transformed into using css variables.
+
+### transformNativeColors: boolean (default false)
+
+if you set this option to true, the plugin will also transform the `native` color names of theme-ui - such as `bg`. This can offset the color lookups at build-time rather than run-time.
+
+Currently the following property names are treated as `color` style names:
+```
+  "color",
+  "backgroundColor",
+  "borderColor",
+  "caretColor",
+  "columnRuleColor",
+  "borderTopColor",
+  "borderBottomColor",
+  "borderLeftColor",
+  "borderRightColor",
+  "outlineColor",
+  "fill",
+  "stroke",
+  "bg",
+```
 ## Javascript theme
 
 ```
@@ -40,9 +62,10 @@ module: {
           [
             babelThemeUI,
             {
+              transformNativeColors: true,
               useCustomProperties: false, 
-              colorNames: ['color', 'bg', 'backgroundColor', '--bg-hover', '--color-hover', '--bg-random', '--color'],
-              rootNames = ['root', 'body'],
+              colorNames: ['--bg-*', '--color-*'],
+              rootNames: ['root', 'body'],
             }
           ]
         ]
@@ -69,9 +92,10 @@ module: {
           [
             babelThemeUI,
             {
+              transformNativeColors: true,
               useCustomProperties: false, 
-              colorNames: ['color', 'bg', 'backgroundColor', '--bg-hover', '--color-hover', '--bg-random', '--color'],
-              rootNames = ['root', 'body'],
+              colorNames: ['--bg-*', '--color-*'],
+              rootNames: ['root', 'body'],
             }
           ]
         ]
@@ -143,10 +167,11 @@ export const theme = {
   },
   input: {
     bg: 'primary',
-    border: 'solid 1px black'    
+    '--bg-random': 'primary',
+    border: 'solid 1px black',
   },
   styles: {
-    select: 'input'
+    select: 'input',
   },
 };
 ```
@@ -157,12 +182,14 @@ export const theme = {
     primary: "tomato",
   },
   input: {
-    bg: "var(--theme-ui-colors-primary)",
+    bg: "primary",
+    "--bg-random": "var(--theme-ui-colors-primary)",
     border: "solid 1px black",
   },
   styles: {
     select: {
-      bg: "var(--theme-ui-colors-primary)",
+      bg: "primary",
+      "--bg-random": "var(--theme-ui-colors-primary)",
       border: "solid 1px black",
     },
   },

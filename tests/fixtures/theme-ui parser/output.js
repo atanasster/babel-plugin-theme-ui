@@ -7,6 +7,7 @@ export const theme = {
     secondary: "#00aa00",
   },
   input: {
-    bg: "var(--theme-ui-colors-primary)",
+    bg: "primary",
+    "--bg-random": "var(--theme-ui-colors-primary)",
   },
 };

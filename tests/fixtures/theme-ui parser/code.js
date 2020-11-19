@@ -8,5 +8,6 @@ export const theme = {
   },
   input: {
     bg: 'primary',
+    '--bg-random': 'primary',
   },
 };
