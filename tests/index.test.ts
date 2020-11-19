@@ -5,7 +5,7 @@ import plugin from '../src';
 pluginTester({
   plugin,
   pluginOptions: {
-    colorNames: ['--bg-hover', '--color-hover', '--bg-random', '--color'],
+    colorNames: ['--bg*', '--color*'],
   },
   babelOptions: {
     presets: [['typescript']],

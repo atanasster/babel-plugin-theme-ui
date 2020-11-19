@@ -1,4 +1,5 @@
 import { scales } from '@theme-ui/css';
+import micromatch from 'micromatch';
 import { toVarValue } from './var-names';
 
 type Value = {
@@ -49,7 +50,7 @@ const transformTree = (props: TransformProps) => {
           lookup = { __path: item.__path, __value: items}
         }
       } else {
-        if (colorNames.includes(key) && fullTree['colors']?.[item.__value]) {
+        if (micromatch.isMatch(key, colorNames) && fullTree['colors']?.[item.__value]) {
           if (useCustomProperties && !rootNames.includes(parentKey)){ 
             item.__path.node.value.value = toVarValue(item.__value);
           } else {

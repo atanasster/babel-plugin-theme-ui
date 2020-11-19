@@ -19,7 +19,8 @@ You can configure the plugin in your webpack configuration as a babel-loader plu
 When this option is set to false, the plugin will not transform color properties to use css variables ie `var(--theme-ui-colors-primary)`
 ### colorNames: string[] (default []),
 
-a list of the color property names to be transformed to css variables
+a list of the color property names to be transformed to css variables. We are using internally [micromatch](https://github.com/micromatch/micromatch) - a glob matching for javascript/node.js and you can use matching patterns for the color properties.
+
 
 ### rootNames: string[] (default ['root', 'colors'])
 
@@ -61,9 +62,10 @@ module: {
           [
             babelThemeUI,
             {
+              transformNativeColors: true,
               useCustomProperties: false, 
-              colorNames: ['color', 'bg', 'backgroundColor', '--bg-hover', '--color-hover', '--bg-random', '--color'],
-              rootNames = ['root', 'body'],
+              colorNames: ['--bg-*', '--color-*'],
+              rootNames: ['root', 'body'],
             }
           ]
         ]
@@ -90,9 +92,10 @@ module: {
           [
             babelThemeUI,
             {
+              transformNativeColors: true,
               useCustomProperties: false, 
-              colorNames: ['color', 'bg', 'backgroundColor', '--bg-hover', '--color-hover', '--bg-random', '--color'],
-              rootNames = ['root', 'body'],
+              colorNames: ['--bg-*', '--color-*'],
+              rootNames: ['root', 'body'],
             }
           ]
         ]

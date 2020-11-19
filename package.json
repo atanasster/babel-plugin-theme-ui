@@ -31,6 +31,7 @@
   "author": "Atanas Stoyanov",
   "license": "MIT",
   "dependencies": {
+    "micromatch": "^4.0.2",
     "theme-ui": "^0.4.0-rc.5"
   },
   "devDependencies": {

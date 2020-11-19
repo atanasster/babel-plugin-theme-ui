@@ -9,7 +9,10 @@ module.exports = override(
     options: {
       presets: [['typescript']],
       plugins: [
-        [babelThemeUI, { colorNames: ['color', 'bg', '--bg-hover']}]
+        [babelThemeUI, { 
+          transformNativeColors: true,
+          colorNames: ['--bg-*', '--color-*'],
+        }]
       ]
     }
   })
