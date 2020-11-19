@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "babel-plugin-theme-ui-gatsby",
+  "name": "babel-plugin-theme-ui-gatsby-js",
   "version": "0.4.0-rc.0",
   "main": "index.js",
   "license": "MIT",
@@ -18,8 +18,5 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "theme-ui": "^0.4.0-rc.0"
-  },
-  "devDependencies": {
-    "babel-preset-typescript": "^7.0.0-alpha.19"
   }
 }

@@ -6,7 +6,7 @@ exports.onCreateWebpackConfig = ({ actions }) => {
     module: {
       rules: [
         {
-          test: /theme.js$/,
+          test: /theme.js/,
           exclude: /node_modules/,
           loader: "babel-loader",
           options: {
@@ -14,10 +14,7 @@ exports.onCreateWebpackConfig = ({ actions }) => {
               [
                 babelThemeUI,
                 {
-                  transformNativeColors: true,
-                  useCustomProperties: false,
                   colorNames: ["--bg-*", "--color-*"],
-                  rootNames: ["root", "body"],
                 },
               ],
             ],

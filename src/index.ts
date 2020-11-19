@@ -51,10 +51,13 @@ const transformTree = (props: TransformProps) => {
         }
       } else {
         if (micromatch.isMatch(key, colorNames) && fullTree['colors']?.[item.__value]) {
-          if (useCustomProperties && !rootNames.includes(parentKey)){ 
+          if (rootNames.includes(parentKey)) {
+            item.__path.node.value.value = item.__value;
+          } 
+          else if (useCustomProperties){ 
             item.__path.node.value.value = toVarValue(item.__value);
           } else {
-            item.__path.node.value.value = item.__value;
+            item.__path.node.value.value = fullTree['colors']?.[item.__value].__value;
           };         
         } else {
           lookup = findPath(fullTree, current, item.__value);
@@ -106,6 +109,24 @@ export default (_: any, options: {
   const colorNames = transformNativeColors ? [...customColorNames, ...nativeColorScales] : customColorNames;
   let current: Tree = tree;
   let useCustomProperties: boolean = customProps;
+  const ThemeDefinition = {
+    enter() {
+      tree = {
+        __parent: undefined,
+      };
+      current = tree;
+    },
+    exit() {
+      transformTree({
+        
+        fullTree: tree, 
+        current: tree,
+        rootNames,
+        colorNames,
+        useCustomProperties, 
+      });
+    }    
+  };
   return {
     name: 'theme-ui parser',
     visitor: {
@@ -155,25 +176,8 @@ export default (_: any, options: {
           }  
         }  
       },
-      VariableDeclaration:  {
-        enter() {
-          tree = {
-            __parent: undefined,
-          };
-          current = tree;
-        },
-        exit() {
-          transformTree({
-            
-            fullTree: tree, 
-            current: tree,
-            rootNames,
-            colorNames,
-            useCustomProperties, 
-          });
-        }    
-      }
-
+      ExportDefaultDeclaration: ThemeDefinition,
+      VariableDeclaration:  ThemeDefinition,
     }
   };
 }

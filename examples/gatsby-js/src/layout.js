@@ -1,5 +1,4 @@
 /** @jsx jsx */
-import { React } from "react"; // eslint-disable-line
 import { jsx, Box, Container, Button, useColorMode } from "theme-ui";
 
 export const Layout = (props) => {
