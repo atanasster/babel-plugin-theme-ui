@@ -8,7 +8,7 @@ export const theme = {
     secondary: "#000000",
   },
   input: {
-    bg: "var(--theme-ui-colors-primary)",
+    bg: "primary",
     fontFamily: "helvetica, arial, sans-serif",
     "--bg-hover": "var(--theme-ui-colors-secondary)",
     "--color-hover": "var(--theme-ui-colors-primary)",

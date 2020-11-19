@@ -1,4 +1,4 @@
-import color from '@styled-system/color';
+import { scales } from '@theme-ui/css';
 import { toVarValue } from './var-names';
 
 type Value = {
@@ -82,14 +82,27 @@ const transformTree = (props: TransformProps) => {
     }
   })
 }
-export default (_: any, options: { useCustomProperties: boolean;
+
+const nativeColorScales = Object.keys(scales).filter(key => scales[key] === 'colors');
+nativeColorScales.push('bg');
+
+export default (_: any, options: { 
+    useCustomProperties: boolean;
     rootNames: string[];
     colorNames: string[];
+    transformNativeColors: boolean;
+    defaultColorScales
   }) => {
-  const { useCustomProperties: customProps = true, colorNames = color.propNames, rootNames = ['root', 'colors'] } = options;  
+  const { 
+    useCustomProperties: customProps = true,
+    transformNativeColors = false,
+    colorNames: customColorNames = [],
+    rootNames = ['root', 'colors'],
+   } = options;  
   let tree: Tree = {
     __parent: undefined,
   };
+  const colorNames = transformNativeColors ? [...customColorNames, ...nativeColorScales] : customColorNames;
   let current: Tree = tree;
   let useCustomProperties: boolean = customProps;
   return {

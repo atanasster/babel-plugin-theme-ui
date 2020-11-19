@@ -30,10 +30,10 @@ export const theme = {
       bg: "background",
     },
     a: {
-      color: "var(--theme-ui-colors-primary)",
+      color: "primary",
       textDecoration: "none",
       ":hover": {
-        color: "var(--theme-ui-colors-secondary)",
+        color: "secondary",
         textDecoration: "underline",
       },
     },

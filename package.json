@@ -31,7 +31,6 @@
   "author": "Atanas Stoyanov",
   "license": "MIT",
   "dependencies": {
-    "@styled-system/color": "^5.1.2",
     "theme-ui": "^0.4.0-rc.5"
   },
   "devDependencies": {

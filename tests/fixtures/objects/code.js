@@ -4,6 +4,7 @@ export const theme = {
   },
   input: {
     bg: 'primary',
+    '--bg-random': 'primary',
     border: 'solid 1px black',
   },
   styles: {
