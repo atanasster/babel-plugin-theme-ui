@@ -1,4 +1,3 @@
-
 # About
 
 `babel-plugin-theme-ui` babel plugin transformations for theme-ui themes.
@@ -14,13 +13,14 @@ yarn add babel-plugin-theme-ui --dev
 You can configure the plugin in your webpack configuration as a babel-loader plugin
 
 ## Options
+
 ### useCustomProperties: boolean (default true)
 
 When this option is set to false, the plugin will not transform color properties to use css variables ie `var(--theme-ui-colors-primary)`
+
 ### colorNames: string[] (default []),
 
 a list of the color property names to be transformed to css variables. We are using internally [micromatch](https://github.com/micromatch/micromatch) - a glob matching for javascript/node.js and you can use matching patterns for the color properties.
-
 
 ### rootNames: string[] (default ['root', 'colors'])
 
@@ -31,6 +31,7 @@ a list of the theme section not the be transformed into using css variables.
 if you set this option to true, the plugin will also transform the `native` color names of theme-ui - such as `bg`. This can offset the color lookups at build-time rather than run-time.
 
 Currently the following property names are treated as `color` style names:
+
 ```
   "color",
   "backgroundColor",
@@ -46,15 +47,16 @@ Currently the following property names are treated as `color` style names:
   "stroke",
   "bg",
 ```
+
 ## Javascript theme
 
 ```
-const babelThemeUI = require('babel-plugin-theme-ui);
+const babelThemeUI = require('babel-plugin-theme-ui');
 
 module: {
   rules: [
     {
-      test: /theme.ts$/,
+      test: /theme.js$/,
       exclude: /node_modules/,
       loader: 'babel-loader',
       options: {
@@ -63,7 +65,7 @@ module: {
             babelThemeUI,
             {
               transformNativeColors: true,
-              useCustomProperties: false, 
+              useCustomProperties: false,
               colorNames: ['--bg-*', '--color-*'],
               rootNames: ['root', 'body'],
             }
@@ -75,10 +77,38 @@ module: {
 },
 ```
 
+## Gatsby Plugin Theme UI
+
+```
+const path = require("path");
+const babelThemeUI = require('babel-plugin-theme-ui');
+
+module: {
+  rules: [
+    {
+      test: /index.js$/,
+      exclude: /node_modules/,
+      include: path.resolve(__dirname, "src/gatsby-plugin-theme-ui"),
+      loader: "babel-loader",
+      options: {
+        plugins: [
+          [
+            babelThemeUI,
+            {
+              colorNames: ["--bg-*", "--color-*"],
+            },
+          ],
+        ],
+      },
+    },
+  ],
+},
+```
+
 ## Typescript theme
 
 ```
-const babelThemeUI = require('babel-plugin-theme-ui);
+const babelThemeUI = require('babel-plugin-theme-ui');
 
 module: {
   rules: [
@@ -93,7 +123,7 @@ module: {
             babelThemeUI,
             {
               transformNativeColors: true,
-              useCustomProperties: false, 
+              useCustomProperties: false,
               colorNames: ['--bg-*', '--color-*'],
               rootNames: ['root', 'body'],
             }
@@ -104,11 +134,13 @@ module: {
   ],
 },
 ```
+
 # Transforms
 
 ## Keys in current scope
 
 `secondary` and `green` are child nodes of the same parent (`colors`):
+
 ```
 export const theme = {
   colors: {
@@ -117,9 +149,11 @@ export const theme = {
     },
     secondary: 'green.30'
   },
-};  
+};
 ```
-will be transformed to 
+
+will be transformed to
+
 ```
 export const theme = {
   colors: {
@@ -128,12 +162,13 @@ export const theme = {
     },
     secondary: '#00aa00'
   },
-};  
+};
 ```
 
 ## Keys from global scope
 
 in the following example the lookup is in a global scope of the theme colors
+
 ```
 export const theme = {
   colors: {
@@ -144,7 +179,9 @@ export const theme = {
   },
 };
 ```
-will be transformed to 
+
+will be transformed to
+
 ```
 export const theme = {
   colors: {
@@ -175,7 +212,9 @@ export const theme = {
   },
 };
 ```
-will be transformed to 
+
+will be transformed to
+
 ```
 export const theme = {
   colors: {
@@ -208,7 +247,9 @@ export const theme = {
   },
 };
 ```
-will be transformed to 
+
+will be transformed to
+
 ```
 export const theme = {
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
@@ -231,7 +272,8 @@ export const theme = {
 };
 ```
 
-will be transformed to 
+will be transformed to
+
 ```
 export const theme = {
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
@@ -240,4 +282,32 @@ export const theme = {
   },
 };
 ```
+
 notice above that the `space.2` key is replaced with the second value in the space array, while the `14px` is left intact since it is not a valid theme key
+
+## References to custom scales
+
+Custom scales can be created to supplement [those already existing](https://theme-ui.com/theme-spec).
+
+Simply create a new scale, then reference it in a variant
+
+```
+  space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
+  speed: ["0.35s", "0.5s", "0.75s"],
+  ease: {
+    in: "ease-in",
+    out: "ease-out",
+    inOut: "ease-in-out",
+  },
+```
+
+```
+  a: {
+  color: "primary",
+
+  "--speed": "speed.1",
+  "--ease": "ease.out",
+
+  transition: "color var(--speed, 0.35s) var(--ease, ease)"
+},
+```

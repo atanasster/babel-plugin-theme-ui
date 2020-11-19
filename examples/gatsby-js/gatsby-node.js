@@ -1,4 +1,4 @@
-// const path = require("path");
+const path = require("path");
 const babelThemeUI = require("../../dist/cjs");
 
 exports.onCreateWebpackConfig = ({ actions }) => {
@@ -6,15 +6,19 @@ exports.onCreateWebpackConfig = ({ actions }) => {
     module: {
       rules: [
         {
-          test: /theme.js/,
+          test: /index.js$/,
           exclude: /node_modules/,
+          include: path.resolve(__dirname, "src/gatsby-plugin-theme-ui"),
           loader: "babel-loader",
           options: {
             plugins: [
               [
                 babelThemeUI,
                 {
+                  transformNativeColors: true,
+                  useCustomProperties: false,
                   colorNames: ["--bg-*", "--color-*"],
+                  rootNames: ["root", "body"],
                 },
               ],
             ],
