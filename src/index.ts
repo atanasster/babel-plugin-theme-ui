@@ -4,6 +4,7 @@ import { toVarValue } from './var-names';
 
 type Value = {
   __value: string | string[] | object | number | number[];
+  scale?: string;
   __path: any
 }
 
@@ -22,22 +23,41 @@ const findPath = (fullTree: Tree, currentNode: Tree, value: string | string[]) :
           t[s]:
            undefined;
     }, tree );
-    return findSeg(fullTree) || findSeg(currentNode);
+    const retVal: Value | undefined = findSeg(fullTree) || findSeg(currentNode);
+    seg.pop();
+    return retVal ? { ...retVal, scale: seg.join('.') } : retVal;
   }
   return undefined;
 }
 
-interface TransformProps {
-  useCustomProperties: boolean; 
+type TransformProps = {
   fullTree: Tree;
   parentKey?: string;
   current: Tree;
-  rootNames: string[];
-  colorNames: string[];
+} & PluginOptions
+
+interface PluginOptions { 
+  useCustomProperties?: boolean;
+  rootNames?: string[];
+  colorNames?: string[];
+  transformNativeColors?: boolean;
+  spaceFormats?: Record<string, string | ((value: any) => string)> 
+}
+
+const transformValue = (spaceFormats: PluginOptions['spaceFormats'], key: string, value: any) => {
+  if (spaceFormats[key]) {
+    const formatter = spaceFormats[key];
+    if (typeof formatter === 'function') {
+      return (formatter as (value: any) => string)(value)
+    } else {
+      return formatter;
+    }
+  }
+  return value;
 }
 
 const transformTree = (props: TransformProps) => {
-  const { useCustomProperties, fullTree, parentKey, current, rootNames, colorNames } = props;
+  const { useCustomProperties, fullTree, parentKey, current, rootNames, colorNames, spaceFormats } = props;
   Object.keys(current).filter(key => !['__parent', '__path', '__value'].includes(key)).forEach(key => {
     const item = current[key];
     if ('__parent' in item) {
@@ -65,21 +85,21 @@ const transformTree = (props: TransformProps) => {
       }   
       
       if (lookup) {
-        const { __value, __path } = lookup;
+        const { __value, __path, scale } = lookup;
         switch (typeof __value) {
           case 'object':
             if (!Array.isArray(__value)) {
-              item.__path.node.value = __path.node.value;
+              item.__path.node.value = transformValue(spaceFormats, scale, __path.node.value);
             } else {
               item.__path.node.value.elements = item.__path.node.value.elements.map((e, idx) => ({
-                ...e, value: __value[idx] !== undefined ? (__value[idx] as unknown as Value).__value : e.value,
+                ...e, value: __value[idx] !== undefined ? transformValue(spaceFormats, scale, (__value[idx] as unknown as Value).__value) : transformValue(spaceFormats, scale, e.value),
                   
                 }));
             }
             break;
           case 'string':
           case 'number':
-            item.__path.node.value.value = __value;
+            item.__path.node.value.value = transformValue(spaceFormats, scale, __value );
             break;
         }
       }
@@ -87,26 +107,23 @@ const transformTree = (props: TransformProps) => {
   })
 }
 
-const nativeColorScales = Object.keys(scales).filter(key => scales[key] === 'colors');
-nativeColorScales.push('bg');
+const nativeColorNames = Object.keys(scales).filter(key => scales[key] === 'colors');
+nativeColorNames.push('bg');
 
-export default (_: any, options: { 
-    useCustomProperties: boolean;
-    rootNames: string[];
-    colorNames: string[];
-    transformNativeColors: boolean;
-    defaultColorScales
-  }) => {
+export default (_: any, options: PluginOptions) => {
   const { 
     useCustomProperties: customProps = true,
     transformNativeColors = false,
     colorNames: customColorNames = [],
     rootNames = ['root', 'colors'],
+    spaceFormats = {
+      space: value => `"${value}px"`,
+    }
    } = options;  
   let tree: Tree = {
     __parent: undefined,
   };
-  const colorNames = transformNativeColors ? [...customColorNames, ...nativeColorScales] : customColorNames;
+  const colorNames = transformNativeColors ? [...customColorNames, ...nativeColorNames] : customColorNames;
   let current: Tree = tree;
   let useCustomProperties: boolean = customProps;
   const ThemeDefinition = {
@@ -118,12 +135,13 @@ export default (_: any, options: {
     },
     exit() {
       transformTree({
-        
         fullTree: tree, 
         current: tree,
         rootNames,
         colorNames,
-        useCustomProperties, 
+        useCustomProperties,
+        transformNativeColors,
+        spaceFormats,
       });
     }    
   };

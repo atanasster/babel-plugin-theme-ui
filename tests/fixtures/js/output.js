@@ -33,7 +33,7 @@ export default {
     a: {
       color: "primary",
       textDecoration: "none",
-      "--test": 32,
+      "--test": '"32px"',
       "--bg-hover": "var(--theme-ui-colors-secondary)",
       ":hover": {
         color: "secondary",

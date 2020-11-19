@@ -48,6 +48,10 @@ Currently the following property names are treated as `color` style names:
   "bg",
 ```
 
+## spaceFormats: Record<string, string | function (value: any) => string> (default { space: value => `"${value}px"`,})
+
+you can use this option and apply custom formatting to the transformed values - by default the `space` values are transformed to strings by adding `px` at the end.
+
 ## Javascript theme
 
 ```
