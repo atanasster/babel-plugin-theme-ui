@@ -258,7 +258,7 @@ will be transformed to
 export const theme = {
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   button: {
-    borderRadius: 8,
+    borderRadius: "8px",
   },
 };
 ```
@@ -282,7 +282,7 @@ will be transformed to
 export const theme = {
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   input: {
-    "--space-gap": [8, "14px", 16, 32],
+    "--space-gap": ["8px", "14px", "16px", "32px"],
   },
 };
 ```
@@ -296,7 +296,6 @@ Custom scales can be created to supplement [those already existing](https://them
 Simply create a new scale, then reference it in a variant
 
 ```
-  space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   speed: ["0.35s", "0.5s", "0.75s"],
   ease: {
     in: "ease-in",
@@ -308,10 +307,8 @@ Simply create a new scale, then reference it in a variant
 ```
   a: {
   color: "primary",
-
   "--speed": "speed.1",
   "--ease": "ease.out",
-
   transition: "color var(--speed, 0.35s) var(--ease, ease)"
 },
 ```
