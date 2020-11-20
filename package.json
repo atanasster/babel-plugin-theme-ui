@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-theme-ui",
-  "version": "0.5.1",
+  "version": "0.7.0",
   "description": "Babel plugin parsing theme keys for theme-ui",
   "keywords": [
     "babel",
