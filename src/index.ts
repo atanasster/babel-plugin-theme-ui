@@ -117,7 +117,7 @@ export default (_: any, options: PluginOptions) => {
     colorNames: customColorNames = [],
     rootNames = ['root', 'colors'],
     spaceFormats = {
-      space: value => `"${value}px"`,
+      space: value => `${value}px`,
     }
    } = options;
    const globalSpace = {};
