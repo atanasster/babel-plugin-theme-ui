@@ -312,3 +312,80 @@ Simply create a new scale, then reference it in a variant
   transition: "color var(--speed, 0.35s) var(--ease, ease)"
 },
 ```
+
+## Theme composition
+
+When your theme definition grows, it is common to separate the scales into their on objects that will get merged into the theme object
+
+```
+const scales = {
+  space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
+}
+
+const layout = {
+  '--margin': 'space.3',
+  '--bg-random': 'primary',
+  ease: 'speed.2'
+}
+
+const font = {
+  '--margin': 'space.3',
+  '--color-some': 'primary',
+  ease: 'speed.0'
+}
+
+export default {
+  ...scales,
+  speed: ["0.35s", "0.5s", "0.75"],
+  colors: {
+    primary: '#333',
+    secondary: '#503'
+  },
+  styles: {
+    h1: layout,
+    h2: {
+      ...layout,
+      '--color-more': 'secondary',
+    },  
+    h3: {
+      ...font,
+    },  
+    a: {
+      '--test': 'space.4',
+    },
+  },
+}
+```
+will be transformed to
+
+```
+const scales = {
+  space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
+};
+const layout = {
+  "--margin": '"16px"',
+  "--bg-random": "var(--theme-ui-colors-primary)",
+  ease: "0.75",
+};
+const font = {
+  "--margin": '"16px"',
+  "--color-some": "var(--theme-ui-colors-primary)",
+  ease: "0.35s",
+};
+export default {
+  ...scales,
+  speed: ["0.35s", "0.5s", "0.75"],
+  colors: {
+    primary: "#333",
+    secondary: "#503",
+  },
+  styles: {
+    h1: layout,
+    h2: { ...layout, "--color-more": "var(--theme-ui-colors-secondary)" },
+    h3: { ...font },
+    a: {
+      "--test": '"32px"',
+    },
+  },
+};
+```

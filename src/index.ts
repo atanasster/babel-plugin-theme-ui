@@ -119,7 +119,8 @@ export default (_: any, options: PluginOptions) => {
     spaceFormats = {
       space: value => `"${value}px"`,
     }
-   } = options;  
+   } = options;
+   const globalSpace = {};
   let tree: Tree = {
     __parent: undefined,
   };
@@ -133,7 +134,7 @@ export default (_: any, options: PluginOptions) => {
       };
       current = tree;
     },
-    exit() {
+    exit(path) {
       transformTree({
         fullTree: tree, 
         current: tree,
@@ -143,6 +144,16 @@ export default (_: any, options: PluginOptions) => {
         transformNativeColors,
         spaceFormats,
       });
+      const declarations = path.node.declarations;
+      if (declarations) {
+        if (Array.isArray(declarations) && declarations.length > 0) {
+          const declaration = declarations[0];
+          const name = declaration.id?.name;
+          if (name) {
+            globalSpace[name] = {...tree};
+          }
+        }
+      }
     }    
   };
   return {
@@ -173,6 +184,12 @@ export default (_: any, options: PluginOptions) => {
                 }
                 current = current[node.key.name ?? node.key.value];
                 break;
+
+              case 'Identifier':
+                if (current && globalSpace[node.key?.name]) {
+                  current = Object.assign(current, globalSpace[node.key?.name]);
+                }
+                break;
               case 'BooleanLiteral': 
                 if (node.key.name === 'useCustomProperties') {
                   useCustomProperties = node.value.value;
@@ -194,6 +211,15 @@ export default (_: any, options: PluginOptions) => {
           }  
         }  
       },
+      SpreadElement: {
+        enter(path) {
+          const node = path.node;
+          if (globalSpace[node.argument?.name]) {
+            current = Object.assign(current, globalSpace[node.argument?.name]);
+          }
+
+        }
+      },    
       ExportDefaultDeclaration: ThemeDefinition,
       VariableDeclaration:  ThemeDefinition,
     }
