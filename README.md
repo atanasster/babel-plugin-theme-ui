@@ -146,6 +146,38 @@ module.exports = {
 }
 ```
 
+## Storybook webpack config
+
+```js
+// .storybook/wepback.config.js
+const babelThemeUI = require('babel-plugin-theme-ui').default
+
+module.exports = async ({ config }) => {
+  config.module.rules.push({
+    test: /theme.ts$/,
+    use: [
+      {
+        loader: 'babel-loader',
+        options: {
+          presets: [['next/babel']],
+          plugins: [
+            [
+              babelThemeUI,
+              {
+                transformNativeColors: true,
+                useCustomProperties: false,
+                colorNames: ['--bg-*', '--color-*'],
+                rootNames: ['root', 'body'],
+              }
+            ]
+          ]
+        }
+      },
+    ],
+  })
+}
+```
+
 ## Typescript theme
 
 ```ts
