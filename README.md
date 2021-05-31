@@ -56,7 +56,7 @@ you can use this option and apply custom formatting to the transformed values - 
 
 ## Javascript theme
 
-```
+```js
 const babelThemeUI = require('babel-plugin-theme-ui');
 
 module: {
@@ -85,7 +85,7 @@ module: {
 
 ## Gatsby Plugin Theme UI
 
-```
+```js
 const path = require("path");
 const babelThemeUI = require('babel-plugin-theme-ui');
 
@@ -111,9 +111,44 @@ module: {
 },
 ```
 
+## Next.JS webpack config
+
+```js
+// next.config.js
+const babelThemeUI = require('babel-plugin-theme-ui');
+
+module.exports = {
+  webpack(config, options) {
+    config.module.rules.push({
+      test: /theme.ts$/,
+      use: [
+        options.defaultLoaders.babel,
+        {
+          loader: 'babel-loader',
+          options: {
+            presets: [['next/babel']],
+            plugins: [
+              [
+                babelThemeUI,
+                {
+                  transformNativeColors: true,
+                  useCustomProperties: false,
+                  colorNames: ['--bg-*', '--color-*'],
+                  rootNames: ['root', 'body'],
+                }
+              ]
+            ]
+          }
+        },
+      ],
+    })
+  }
+}
+```
+
 ## Typescript theme
 
-```
+```ts
 const babelThemeUI = require('babel-plugin-theme-ui');
 
 module: {
@@ -147,7 +182,7 @@ module: {
 
 `secondary` and `green` are child nodes of the same parent (`colors`):
 
-```
+```js
 export const theme = {
   colors: {
     green:{
@@ -160,7 +195,7 @@ export const theme = {
 
 will be transformed to
 
-```
+```js
 export const theme = {
   colors: {
     green:{
@@ -175,7 +210,7 @@ export const theme = {
 
 in the following example the lookup is in a global scope of the theme colors
 
-```
+```js
 export const theme = {
   colors: {
     primary: '#ffffff',
@@ -188,7 +223,7 @@ export const theme = {
 
 will be transformed to
 
-```
+```js
 export const theme = {
   colors: {
     primary: '#ffffff',
@@ -203,7 +238,7 @@ export const theme = {
 
 to avoid repetitive styles for multiple theme keys:
 
-```
+```js
 export const theme = {
   colors: {
     primary: 'tomato',
@@ -221,7 +256,7 @@ export const theme = {
 
 will be transformed to
 
-```
+```js
 export const theme = {
   colors: {
     primary: "tomato",
@@ -245,7 +280,7 @@ export const theme = {
 
 to get shortcuts into array keys in the theme, such as `spaces` and `fontSizes`
 
-```
+```js
 export const theme = {
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   button: {
@@ -256,7 +291,7 @@ export const theme = {
 
 will be transformed to
 
-```
+```js
 export const theme = {
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   button: {
@@ -269,7 +304,7 @@ export const theme = {
 
 some of the theme-ui values are arrays - to be used based on the current screen resolution
 
-```
+```js
 export const theme = {
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   input: {
@@ -280,7 +315,7 @@ export const theme = {
 
 will be transformed to
 
-```
+```js
 export const theme = {
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
   input: {
@@ -297,7 +332,7 @@ Custom scales can be created to supplement [those already existing](https://them
 
 Simply create a new scale, then reference it in a variant
 
-```
+```js
   speed: ["0.35s", "0.5s", "0.75s"],
   ease: {
     in: "ease-in",
@@ -306,7 +341,7 @@ Simply create a new scale, then reference it in a variant
   },
 ```
 
-```
+```js
   a: {
   color: "primary",
   "--speed": "speed.1",
@@ -319,7 +354,7 @@ Simply create a new scale, then reference it in a variant
 
 When your theme definition grows, it is common to separate the scales into their on objects that will get merged into the theme object
 
-```
+```js
 const scales = {
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
 }
@@ -361,7 +396,7 @@ export default {
 
 will be transformed to
 
-```
+```js
 const scales = {
   space: [0, 4, 8, 16, 32, 64, 128, 256, 512],
 };
