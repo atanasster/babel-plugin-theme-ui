@@ -10,7 +10,7 @@ yarn add babel-plugin-theme-ui --dev
 
 # Configuration
 
-You can configure the plugin in your webpack configuration as a babel-loader plugin
+You can configure the plugin in your webpack configuration as a babel-loader plugin [see examples](#example-configurations)
 
 ## Options
 
@@ -51,6 +51,8 @@ Currently the following property names are treated as `color` style names:
 ## spaceFormats: Record<string, string | function (value: any) => string> (default { space: value => `"${value}px"`,})
 
 you can use this option and apply custom formatting to the transformed values - by default the `space` values are transformed to strings by adding `px` at the end.
+
+# Example configurations
 
 ## Javascript theme
 
