@@ -25,9 +25,13 @@ const findPath = (
         if (!t) {
           return undefined;
         }
-        return Array.isArray(t.__value)
-          ? { __path: t.__path, __value: t.__value[s] }
-          : t[s];
+        if (Array.isArray(t.__value)) {
+          return { __path: t.__path, __value: t.__value[s] };
+        }
+        if (t[s] && t[s].__value === value) {
+          return undefined;
+        }
+        return t[s];
       }, tree);
     const retVal: Value | undefined = findSeg(fullTree) || findSeg(currentNode);
     seg.pop();
@@ -41,7 +45,6 @@ const findPath = (
         result.__value = p.__value;
       }
     }
-
     return result;
   }
   return undefined;
